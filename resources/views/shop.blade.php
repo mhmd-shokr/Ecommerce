@@ -327,17 +327,21 @@
       </div>
 
       <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
+        <select  style="margin-right:20px"  class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="page size"
+        name="pageSize" id="pageSize">
+        <option value="12" {{ $size==12 ? 'selected' : ''  }}>Show</option>
+        <option value="24" {{ $size==24 ? 'selected' : ''  }}>24</option>
+        <option value="48" {{ $size==48 ? 'selected' : ''  }}>48</option>
+        <option value="102"{{ $size==102? 'selected' : ''  }}>102</option>
+        
+        </select>
         <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="Sort Items"
-        name="total-number">
-        <option selected>Default Sorting</option>
-        <option value="1">Featured</option>
-        <option value="2">Best selling</option>
-        <option value="3">Alphabetically, A-Z</option>
-        <option value="3">Alphabetically, Z-A</option>
-        <option value="3">Price, low to high</option>
-        <option value="3">Price, high to low</option>
-        <option value="3">Date, old to new</option>
-        <option value="3">Date, new to old</option>
+        name="orderBy" id="orderBy">
+        <option value="-1" {{ $order ==-1   ?'selected' : '' }}>Default </option>
+        <option value="1"  {{ $order == 1   ?'selected' : '' }}>Dtae , new to old</option>
+        <option value="2" {{ $order == 2   ?'selected' : ''  }}>Date , old to new</option>
+        <option value="3"  {{ $order == 3   ?'selected' : '' }}>Price, low to heigh</option>
+        <option value="4"  {{ $order == 4   ?'selected' : '' }}>Price, heigh to low </option>
         </select>
 
         <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
@@ -463,11 +467,36 @@
 
     <div class="driver">
       <div class="flex item-center justify-between flex-wrap gap10 wg-pagination">
- {{ $products->links('pagination::bootstrap-5') }}
+      {{ $products->withQueryString()->links('pagination::bootstrap-5') }}
 </div>
     </div>
     </div>
     </section>
   </main>
 
+  <form id="formfilter" method="GET" action="{{ route('shop.index') }}">
+    <input type="hidden" name="page" value="{{ $products->currentPage() }}">
+    <input type="hidden" name="size" id="size" value="{{ $size}}">
+    <input type="hidden" name="order" id="order" value="{{ $order}}">
+  </form>
+
 @endsection
+
+@push('scripts')
+<script>
+  $(function () {
+    $('#pageSize').on('change', function () {
+      const size = $(this).val(); 
+      $('#size').val(size);
+      $('#formfilter').submit();
+    });
+
+    $('#orderBy').on('change', function () {
+      const order = $(this).val(); 
+      $('#order').val(order);
+      $('#formfilter').submit();
+    });
+  });
+</script>
+
+@endpush
