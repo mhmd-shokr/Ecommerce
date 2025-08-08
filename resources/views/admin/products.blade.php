@@ -116,11 +116,9 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="divider"></div>
             <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
-
-{{ $products->links('pagination::bootstrap-5') }}
+            {{ $products->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

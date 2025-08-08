@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
-use PhpParser\Node\Expr\Cast;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -411,6 +412,63 @@ class AdminController extends Controller
     }
 
 
+        public function coupons(){
+            $coupons=Coupon::orderBy('expiry_date','desc')->paginate(12);
+            return view('admin.coupons',compact('coupons'));
+        }
+
+        public function addCoupons()
+        {
+            return view('admin.addCoupons');
+        }
     
+        public function storeCoupons(Request $request)
+        {
+            $request->validate([
+                'code' => 'required|unique:coupons,code',
+                'type' => ['required', Rule::in(['fixed', 'percent'])],
+                'value' => 'required|numeric|min:0',
+                'cart_value' => 'required|numeric|min:0',
+                'expiry_date' => 'required|date|after_or_equal:today',
+            ]);
+            Coupon::create([
+                'code' => strtoupper($request->code),
+                'type' => $request->type,
+                'value' => $request->value,
+                'cart_value' => $request->cart_value,
+                'expiry_date' => $request->expiry_date,
+            ]);
+            return redirect()->route('admin.coupons')->with('success','Coupons Created Successfully');
+        }
+
+        public function editCoupons($id){
+            $coupon=Coupon::findOrFail($id);
+            return view('admin.editCoupons',compact('coupon'));
+        }
+
+        public function updateCoupons(Request $request){
+            $request->validate([
+                'code' => 'required|unique:coupons,code,' . $request->id,
+                'type' => ['required', Rule::in(['fixed', 'percent'])],
+                'value' => 'required|numeric|min:0',
+                'cart_value' => 'required|numeric|min:0',
+                'expiry_date' => 'required|date|after_or_equal:today',
+            ]);
+            $coupon = Coupon::findOrFail($request->id);
+            $coupon->update([
+                'code' => strtoupper($request->code),
+                'type' => $request->type,
+                'value' => $request->value,
+                'cart_value' => $request->cart_value,
+                'expiry_date' => $request->expiry_date,
+            ]);
+            return redirect()->route('admin.coupons')->with('success','Coupons updated Successfully');
+        }
+
+        public function deleteCoupons($id){
+            $coupon = Coupon::findOrFail($id);
+                $coupon->delete();
+            return redirect()->route('admin.coupons')->with('success','Coupons Deleted Successfully');
+        }
 
 }
