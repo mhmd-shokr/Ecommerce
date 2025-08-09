@@ -39,6 +39,10 @@ Route::put('/cart/decreaseQuantity/{rowId}',[CartController::class,'decreaseCart
 Route::delete('/cart/remove/{rowId}',[CartController::class,'removeItem'])->name('cart.removeItem');
 Route::delete('/cart/clearCart',[CartController::class,'clearCart'])->name('cart.clearCart');
 Route::post('/cart/applyCoupon',[CartController::class,'applyCoupon'])->name('cart.addCoupons');
+Route::delete('/cart/removeCoupon',[CartController::class,'removeCoupon'])->name('cart.removeCoupon');
+Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout');
+Route::post('/placeAnOrder',[CartController::class,'placeAnOrder'])->name('cart.placeAnOrder');
+Route::get('/orderConfirmation',[CartController::class,'orderConfirmation'])->name('cart.orderConfirmation');
 
 Route::controller(SocialController::class)->group(function(){
     Route::get('/auth/redirect/{parameter}','redirect')->name('auth.redirect');
