@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
 
 class AdminController extends Controller
 {
@@ -471,4 +474,15 @@ class AdminController extends Controller
             return redirect()->route('admin.coupons')->with('success','Coupons Deleted Successfully');
         }
 
+        public function orders(){
+            $orders=Order::orderBy('created_at','desc')->paginate();
+            return view ('admin.orders',compact('orders'));
+        }
+
+        public function orderDetails($orderId){
+            $order=Order::findOrFail($orderId);
+            $orderitems=OrderItem::where('order_id',$orderId)->orderBy('id')->paginate();
+            $transaction=Transaction::where('order_id',$orderId)->first();
+            return view('admin.orderDetails',compact('order','orderitems','transaction'));
+        }
 }
