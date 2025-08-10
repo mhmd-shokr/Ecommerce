@@ -36,6 +36,9 @@
 
                 <!-- Order Info -->
                 <div class="table-responsive">
+                    @if (Session::has('success'))
+                        <p class="alert alert-success">{{ Session::get('success') }}</p>
+                    @endif
                     <table class="table table-striped table-bordered">
                         <tr>
                             <th>Order No</th>
@@ -177,6 +180,32 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="wg-box mt-5">
+                    <h5>update order status</h5>
+                    <form action="{{ route('admin.update.status') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="select">
+                                    <select name="order_status" id="order_status">
+                                        <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered
+                                        </option>
+                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>
+                                            Delivered</option>
+                                        <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Canceled
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary tf-button w200">Update status</button>
+                            </div>
+                    </form>
+                </div>
+
             </div>
 
 

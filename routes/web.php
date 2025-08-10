@@ -44,6 +44,13 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout'
 Route::post('/placeAnOrder',[CartController::class,'placeAnOrder'])->name('cart.placeAnOrder');
 Route::get('/orderConfirmation',[CartController::class,'orderConfirmation'])->name('cart.orderConfirmation');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/orders',[UserController::class,'orders'])->name('users.orders');
+    Route::get('/user/orders/{id}/details',[UserController::class,'orderDetails'])->name('users.orders.details');
+
+});
+
 Route::controller(SocialController::class)->group(function(){
     Route::get('/auth/redirect/{parameter}','redirect')->name('auth.redirect');
     Route::get('/auth/callBack/{parameter}','callBack')->name('auth.callBack');
@@ -52,9 +59,6 @@ Route::controller(SocialController::class)->group(function(){
 Route::get('/complete-profile', [ProfileController::class, 'showCompleteForm'])->name('profile.complete');
 Route::post('/complete-profile', [ProfileController::class, 'saveCompleteForm'])->name('profile.complete.save');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.index');
-});
 
 Route::middleware(['auth','verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.index');
@@ -87,5 +91,7 @@ Route::middleware(['auth','verified', AuthAdmin::class])->group(function () {
     Route::delete('/admin/coupons/{id}/delete', [AdminController::class, 'deleteCoupons'])->name('admin.coupons.delete');
     
     Route::get('/admin/orders',[AdminController::class,'orders'])->name('admin.orders');
-Route::get('/admin/oredr/{id}/details',[AdminController::class,'orderDetails'])->name('admin.order.details');
+    Route::get('/admin/oredr/{id}/details',[AdminController::class,'orderDetails'])->name('admin.order.details');
+    Route::put('/admin/oredr/update/status',[AdminController::class,'updateOrderStatus'])->name('admin.update.status');
+
 });

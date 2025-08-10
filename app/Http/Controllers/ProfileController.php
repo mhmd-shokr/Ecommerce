@@ -15,8 +15,15 @@ class ProfileController extends Controller
 public function saveCompleteForm(Request $request)
 {
     $request->validate([
-        'mobile' => 'required|numeric|min:10',
-    ]);
+        'mobile' => 'required|numeric|digits:11|unique:users,mobile',
+    ],
+    [
+        'mobile.required' => 'Mobile number is required.',
+        'mobile.numeric' => 'Mobile number must contain only digits.',
+        'mobile.digits' => 'Mobile number must be exactly 10 digits.',
+        'mobile.unique' => 'This mobile number is already in use. Please choose another one.',
+    ]
+    );
     /**
      * @var /$user/App\Models\User
      */
