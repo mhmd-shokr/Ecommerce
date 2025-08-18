@@ -335,7 +335,7 @@
         <div class="swiper-wrapper">
         <div class="swiper-slide">
         <a href="{{ route('shop.product.details', $product->slug) }}">
-          <img loading="lazy" src="{{ asset('uploads/products/thumbnails/' . $product->image) }}"
+          <img loading="lazy" src="{{ asset('storage/uploads/products/thumbnails/' . $product->image) }}"
           width="330" height="400" alt="{{ $product->name }}" class="pc__img">
         </a>
         </div>
@@ -343,7 +343,7 @@
         @foreach (explode(',', $product->images) as $gImage)
       <div class="swiper-slide">
       <a href="{{ route('shop.product.details', $product->slug) }}">
-        <img loading="lazy" src="{{ asset('uploads/products/thumbnails/' . trim($gImage)) }}" width="330"
+        <img src="{{ asset('storage/uploads/products/thumbnails/' . $gImage) }}" width="330">
         height="400" alt="{{ $product->name }}" class="pc__img">
       </a>
       </div>

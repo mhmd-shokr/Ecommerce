@@ -23,6 +23,7 @@
         <!-- ✅ CSS Files -->
         <link rel="stylesheet" href="{{ asset('assets/css/plugins/swiper.min.css') }}" type="text/css" />
         <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" type="text/css" />
     
         <!-- ✅ Font Awesome -->

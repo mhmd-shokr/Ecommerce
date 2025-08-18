@@ -31,7 +31,7 @@
                     <div class="wg-filter flex-grow">
                         <h5>Ordered Items</h5>
                     </div>
-                    <a class="tf-button style-1 w208" href="orders.html">Back</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.orders') }}">Back</a>
                 </div>
 
                 <!-- Order Info -->
@@ -92,7 +92,7 @@
                                 <tr>
                                     <td class="pname">
                                         <div class="image">
-                                            <img src="{{ asset('uploads/products/thumbnails/' . $item->product->image) }}"
+                                            <img src="{{ asset('storage/uploads/products/thumbnails/' . $item->product->image) }}"
                                                 alt="{{ $item->product->name }}" class="image">
                                         </div>
                                         <div class="name">

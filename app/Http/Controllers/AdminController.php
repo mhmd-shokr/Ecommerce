@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Slide;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -511,5 +513,91 @@ class AdminController extends Controller
             }
         
             return back()->with('success', 'Status changed successfully');
+        }
+
+
+        public function slides(){
+            $slides=Slide::orderBy('id','desc')->paginate(12);
+            return view('admin.slides',compact('slides'));
+        }
+
+
+        public function addSlides(){
+            return view('admin.addSlides');
+        }
+
+        public function storeSlide(Request $request){
+            $request->validate([
+                'tagline'=>'required|string|max:255',
+                'title'=>'required|string',
+                'subtitle'=>'required|string',
+                'link'=>'required|url',
+                'status'    => 'required|in:0,1',
+                'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            $slide=new Slide();
+            $slide->tagline=$request->tagline;
+            $slide->title=$request->title;
+            $slide->subtitle=$request->subtitle;
+            $slide->link=$request->link;
+            $slide->status=$request->status;
+
+            if($request->hasFile('image')){
+                $fileName=time().'_'.$request->file('image')->getClientOriginalName();
+                $path=$request->file('image')->storeAs('uploads/slides',$fileName,'public');
+                $slide->image=$path;
+            }
+            $slide->save();
+
+            return redirect()->back()->with('success', 'Slide created successfully');
+
+        }
+
+        public function editSlide($id){
+            $slide=Slide::findOrFail($id);
+            return view('admin.editSlide',compact('slide'));
+        }
+
+        public function updateSlide(Request $request,$id){
+
+            $request->validate([
+                'tagline'=>'required|string|max:255',
+                'title'=>'required|string',
+                'subtitle'=>'required|string',
+                'link'=>'required|url',
+                'status'    => 'required|in:0,1',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+            $slide = Slide::findOrFail($id);
+            
+            $slide->tagline=$request->tagline;
+            $slide->title=$request->title;
+            $slide->subtitle=$request->subtitle;
+            $slide->link=$request->link;
+            $slide->status=$request->status;
+
+            if($request->hasFile('image')){
+                //if admin upload new image delete old image
+                if ($slide->image && Storage::disk('public')->exists($slide->image)) {
+                    Storage::disk('public')->delete($slide->image);
+                }
+                $fileName=time().'_'.$request->file('image')->getClientOriginalName();
+                $path=$request->file('image')->storeAs('uploads/slides',$fileName,'public');
+                $slide->image=$path;
+            }
+            $slide->save();
+            return redirect()->back()->with('success', 'Slide updated successfully');
+        }
+
+        public function deleteSlide($id){
+            $slide = Slide::findOrFail($id);
+            $imagePath = public_path('storage/' . $slide->image);
+            if(file::exists($imagePath)){
+                File::delete($imagePath);
+            }
+            $slide->delete();
+            return redirect()->back()->with('success', value: 'Slide Deleted successfully');
+
         }
     }        

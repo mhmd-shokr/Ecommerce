@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.index');
     Route::get('/user/orders',[UserController::class,'orders'])->name('users.orders');
     Route::get('/user/orders/{id}/details',[UserController::class,'orderDetails'])->name('users.orders.details');
-
+    Route::put('user/cancelOredr',[UserController::class,'cancelOredr'])->name('user.canmcel.order');
 });
 
 Route::controller(SocialController::class)->group(function(){
@@ -93,5 +93,12 @@ Route::middleware(['auth','verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/orders',[AdminController::class,'orders'])->name('admin.orders');
     Route::get('/admin/oredr/{id}/details',[AdminController::class,'orderDetails'])->name('admin.order.details');
     Route::put('/admin/oredr/update/status',[AdminController::class,'updateOrderStatus'])->name('admin.update.status');
+
+    Route::get('/admin/slides',[AdminController::class,'slides'])->name('admin.slides');
+    Route::get('/admin/addSlides',[AdminController::class,'addSlides'])->name('admin.addSlides');
+    Route::post('/admin/storeSlide',[AdminController::class,'storeSlide'])->name('admin.storeSlide');
+    Route::get('/admin/edit/{id}/slide',[AdminController::class,'editSlide'])->name('admin.editSlide');
+    Route::put('/admin/update/{id}/slide',[AdminController::class,'updateSlide'])->name('admin.updateSlide');
+    Route::delete('/admin/delete/{id}/slide',[AdminController::class,'deleteSlide'])->name('admin.deleteSlide');
 
 });

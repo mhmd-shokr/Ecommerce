@@ -68,7 +68,7 @@
                     </div>
                     <div class="upload-image flex-grow">
                         <div class="item" id="imgpreview" style="{{ $brand->image ? '': 'display:none' }}">
-                            <img src="{{ $brand->image ? asset('uploads/brands/'.$brand->image) : asset('images/no-image.png') }}" 
+                            <img src="{{ $brand->image ? asset('storage/uploads/brands/'.$brand->image) : asset('images/no-image.png') }}" 
                             class="effect8 brand-perview"
                             alt="Brand Image"
                             style="max-width:150px; max-height:150px;">

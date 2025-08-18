@@ -34,19 +34,6 @@
             box-shadow: 0px 4px 24px 2px rgba(20, 25, 38, 0.05);
         }
 
-        .bg-success {
-            background-color: #40c710 !important;
-        }
-
-        .bg-danger {
-            background-color: #f44032 !important;
-        }
-
-        .bg-warning {
-            background-color: #f5d700 !important;
-            color: #000;
-        }
-
         .table-transaction>tbody>tr:nth-of-type(odd) {
             --bs-table-accent-bg: #fff !important;
 
@@ -97,6 +84,21 @@
             border-width: 1px 1px;
             border-color: #6a6e51;
         }
+
+        .bg-success {
+            background-color: #198754 !important;
+            color: #fff !important;
+        }
+
+        .bg-danger {
+            background-color: #dc3545 !important;
+            color: #fff !important;
+        }
+
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
     </style>
 
     <main class="pt-90" style="padding-top: 0px;">
@@ -120,12 +122,11 @@
                                         <th class="text-center">Subtotal</th>
                                         <th class="text-center">Tax</th>
                                         <th class="text-center">Total</th>
-
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Order Date</th>
                                         <th class="text-center">Items</th>
                                         <th class="text-center">Delivered On</th>
-                                        <th></th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,7 +139,15 @@
                                             <td class="text-center">${{ number_format($order->subtotal, 2) }}</td>
                                             <td class="text-center">${{ number_format($order->tax, 2) }}</td>
                                             <td class="text-center">${{ number_format($order->total, 2) }}</td>
-                                            <td class="text-center">{{ $order->status }}</td>
+                                            <td class="text-center">
+                                                @if($order->status == 'delivered')
+                                                    <span class="badge bg-success">Delivered</span>
+                                                @elseif ($order->status == 'canceled')
+                                                    <span class="badge bg-danger">Canceled</span>
+                                                @else
+                                                    <span class="badge bg-warning">Ordered</span>
+                                                @endif
+                                            </td>
                                             <td class="text-center">{{ $order->created_at }}</td>
                                             <td class="text-center">{{ $order->orderItems->count() }}</td>
                                             <td class="text-center">{{ $order->delivered_date}}</td>

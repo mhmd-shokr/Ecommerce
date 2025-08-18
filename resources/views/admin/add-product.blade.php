@@ -272,7 +272,6 @@
         $('#gFile').on('change', function(e) {
     const gphotos = this.files;
 
-    // امسح الصور القديمة قبل عرض الجديدة
     $("#galleryPreview").html('');
 
     $.each(gphotos, function(i, file) {
