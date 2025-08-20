@@ -479,7 +479,7 @@
 
 
         
-        <script>
+     
             (function ($) {
     
                 var tfLineChart = (function () {
