@@ -249,41 +249,50 @@ class AdminController extends Controller
         }
         public function categoryUpdate(Request $request){
             $request->validate([
-                    'name'=>'required|string',
-                    'slug'=>'required|unique:categories,slug,'.$request->id.',id',
-                    'image'=>'nullable|mimes:png,jpg,jpeg|max:2048',
-                ]);
-                $category=Category::findOrFail($request->id);
-                $imageName = $category->image;
-                if($request->hasFile('image')){
-                    //path of file will save in
-                    $destinationPath = public_path('uploads/categories');
+                'name'=>'required|string',
+                'slug'=>'required|unique:categories,slug,'.$request->id.',id',
+                'image'=>'nullable|mimes:png,jpg,jpeg|max:2048',
+            ]);
         
-                    if (!file_exists($destinationPath)) {
-                        mkdir($destinationPath, 0755, true);
-                    }
-                    if ($imageName && file_exists($destinationPath . '/' . $imageName)) {
-                        unlink($destinationPath . '/' . $imageName);
-                    }
-                    // save fileName without extension 
-                    $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
-                    //save extension 
-                    $extension = $request->image->getClientOriginalExtension();
-                    //compine fileName + extension
-                    $imageName = Str::slug($originalName) . '.' . $extension;
-                    $image = Image::make($request->file('image')->getRealPath());
-                    $image->fit(300, 300, function ($constraint) {
-                        $constraint->upsize();
-                    });
-                    $image->save($destinationPath . '/' . $imageName);
+            $category=Category::findOrFail($request->id);
+            $imageName = $category->image;
+        
+            if($request->hasFile('image')){
+                // path of file will save in
+                $destinationPath = public_path('uploads/categories');
+        
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
                 }
-                $category->update([
-                    'name'=>$request->name,
-                    'slug'=>Str::slug($request->slug),
-                    'image' => $imageName,
-                ]);
-                return redirect()->route('admin.categories')->with('success', 'Categories updated successfully');
+        
+                // delete old image if exists
+                if ($imageName && file_exists($destinationPath . '/' . $imageName)) {
+                    unlink($destinationPath . '/' . $imageName);
+                }
+        
+                // save fileName without extension 
+                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                // save extension 
+                $extension = $request->image->getClientOriginalExtension();
+                // combine fileName + timestamp + extension
+                $imageName = Str::slug($originalName) . '-' . time() . '.' . $extension;
+        
+                $image = Image::make($request->file('image')->getRealPath());
+                $image->fit(300, 300, function ($constraint) {
+                    $constraint->upsize();
+                });
+                $image->save($destinationPath . '/' . $imageName);
+            }
+        
+            $category->update([
+                'name'=>$request->name,
+                'slug'=>Str::slug($request->slug),
+                'image' => $imageName,
+            ]);
+        
+            return redirect()->route('admin.categories')->with('success', 'Category updated successfully');
         }
+        
         public function categoryDelete($id){
             $category=Category::findOrFail($id);
             $destinationPath = public_path('uploads/categories/');

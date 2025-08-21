@@ -75,7 +75,7 @@
                                 <td>{{ $i }}</td>
                                 <td class="pname">
                                     <div class="image">
-                                        <img src="{{ asset('storage/uploads/products/thumbnails')}}/{{ $product->image }}" alt="{{ $product->name }}" class="image">
+                                        <img src="{{ asset('storage/products/thumbnails/'.$product->image) }}" alt="{{ $product->name }}">
                                     </div>
                                     <div class="name">
                                         <a href="#" class="body-title-2">{{$product->name  }}</a>

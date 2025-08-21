@@ -142,7 +142,7 @@
 
                         @if($product->image)
                         <div class="item" id="imgpreview">
-                            <img src="{{ asset('storage/uploads/products/thumbnails/'.$product->image) }}"
+                            <img src="{{ asset('storage/products/thumbnails/'.$product->image) }}"
                                 class="effect8" alt="" width="150">
                         </div>
                         @endif
@@ -169,7 +169,7 @@
                         @if ($product->images)
                         @foreach (explode(',', $product->images) as $img)
                             <div class="item gitems" id="">
-                                <img src="{{ asset('storage/uploads/products/thumbnails/' . trim($img)) }}" alt="" style="width: 100px; height: 100px; object-fit: cover;">
+                                <img src="{{ asset('storage/products/thumbnails/' . trim($img)) }}" alt="" style="width: 100px; height: 100px; object-fit: cover;">
                             </div>
                         @endforeach
                     @endif

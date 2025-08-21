@@ -60,8 +60,9 @@
                                 <td>{{ $i}}</td>
                                 <td class="pname">
                                     <div class="image">
-                                        <img src="{{ asset('storage/uploads/categories')}}/{{ $Category->image }}" alt="{{ $Category->name }}" class="image">
+                                        <img src="{{ asset('uploads/categories/' . $Category->image) }}" alt="{{ $Category->name }}" class="image">
                                     </div>
+                                    
                                     <div class="name">
                                         <a href="#" class="body-title-2">{{ $Category->name }}</a>
                                     </div>
