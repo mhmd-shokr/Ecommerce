@@ -37,7 +37,7 @@ class OrderController extends Controller
             'order_status' => 'required|in:ordered,delivered,canceled'
         ]);
         
-        //change status debendon user request delivered or canceled or canceled
+        //change status debend on user request delivered or canceled or ordered
         $order->status = $request->order_status;
     
         if ($request->order_status == 'delivered') {

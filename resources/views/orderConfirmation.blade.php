@@ -54,7 +54,7 @@
                     </div>
                     <div class="order-info__item">
                         <label>Paymetn Method</label>
-                        <span>{{ $order->transaction->mode }}</span>
+                        {{ $order->transaction?->mode ?? 'Not Paid Yet' }}
                     </div>
                 </div>
                 <div class="checkout__totals-wrapper">

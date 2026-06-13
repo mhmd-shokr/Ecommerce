@@ -15,4 +15,7 @@ class HomeController extends Controller
         $categories=Category::orderBy('name')->get();
         return view('index',compact('slides','categories'));
     }
+    public function contact(){
+        return view('contact');
+    }
 }

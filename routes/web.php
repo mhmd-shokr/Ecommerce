@@ -44,6 +44,8 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout'
 Route::post('/placeAnOrder',[CartController::class,'placeAnOrder'])->name('cart.placeAnOrder');
 Route::get('/orderConfirmation',[CartController::class,'orderConfirmation'])->name('cart.orderConfirmation');
 
+Route::get("/contact",[HomeController::class,'contact'])->name('home.contact');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.index');
     Route::get('/user/orders',[UserController::class,'orders'])->name('users.orders');
@@ -101,4 +103,8 @@ Route::middleware(['auth','verified', AuthAdmin::class])->group(function () {
     Route::put('/admin/update/{id}/slide',[AdminController::class,'updateSlide'])->name('admin.updateSlide');
     Route::delete('/admin/delete/{id}/slide',[AdminController::class,'deleteSlide'])->name('admin.deleteSlide');
 
+
+   
 });
+ //Webhook
+ Route::post('/stripe/webhook',[CartController::class,'stripeWebhook']);

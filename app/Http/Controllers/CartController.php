@@ -11,6 +11,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Stripe\StripeClient;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -186,13 +190,42 @@ class CartController extends Controller
             ]);
         }
 
-    if($request->mode=='card'){
-            //
-        }
+        if($request->mode=='card'){
+            $stripe = new StripeClient(config('services.stripe.secret'));
+            $checkoutData = Session::get('checkout');
+            if (!$checkoutData) {
+                return redirect()->back()->withErrors('Checkout data not found');
+            }
 
-    elseif($request->mode=='paypal'){
-            //
-        }
+            $session=$stripe->checkout->sessions->create([
+                'payment_method_types'=>['card'],
+                'metadata'=>[
+                    'order_id'=>$order->id,
+                    'user_id'=>$userId,
+                ],
+                'line_items'=>[
+                    [
+                        'price_data'=>[
+                            'currency'=>'egp',
+                            'product_data'=>[
+                                'name'=>'order_payment',
+                            ],
+                            'unit_amount'=>intval($checkoutData['total']*100),
+                        ],
+                        'quantity'=>1,
+                    ]
+                    ],
+                'mode'=>'payment',
+                'success_url' => route('cart.orderConfirmation'),
+                'cancel_url' => route('cart.index'),
+            ]);
+            Session::put('order_id', $order->id);
+            return redirect($session->url);
+            }
+
+    // elseif($request->mode=='paypal'){
+    //         //
+    //     }
 
 
     elseif($request->mode=='cod'){
@@ -200,12 +233,11 @@ class CartController extends Controller
                 'user_id' => $userId,
                 'order_id' => $order->id,
                 'mode' => 'cod',
-                'status' => 'pending'
+                'status' => 'ordered'
             ]);
         }
             
         Cart::instance('cart')->destroy();
-
         Session::forget(['checkout', 'coupon', 'discounts']);
         Session::put('order_id',$order->id);
         return redirect()->route('cart.orderConfirmation');
@@ -238,10 +270,38 @@ class CartController extends Controller
 
     public function orderConfirmation(){
         if(Session::has('order_id')){
-            $order=Order::findOrFail(Session::get('order_id'));
+            $order = Order::where('id', Session::get('order_id'))->first();
             return view('orderConfirmation',compact('order'));
         }
         return redirect()->route('cart.index');
 
+    }
+
+    public function stripeWebhook(Request $request){
+        Log::info('Stripe Webhook Works');
+        $payload=$request->all();
+        $event=$payload['type']??null;
+        if($event === 'checkout.session.completed'){
+            $session=$payload['data']['object'];
+            $orderId=$session['metadata']['order_id']??null;
+            if($orderId){
+                $order=Order::findOrFail($orderId);
+                
+                    $order->update(['status'=>'paid']);
+                    if(!$order->transaction)
+                        {
+                            $order->transaction()->create([
+                                'user_id' => $order->user_id,
+                                'order_id' => $order->id,
+                                'mode' => 'card',
+                                'status' => 'paid',
+                            ]);
+                        }                   
+                
+            }
+        }
+        return response()->json([
+            'status' => 'success'
+        ]);
     }
 }
